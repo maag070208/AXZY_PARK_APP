@@ -5,10 +5,22 @@ import { getFullImageUrl } from '../../../../core/utils/imageUtils';
 
 interface Props {
   formik: any;
+  locations: any[];
+  vehicleTypes: any[];
 }
 
-export const ConfirmationStep = ({ formik }: Props) => {
-  const { brand, model, color, plates, mileage, notes, photos, locationId } = formik.values;
+export const ConfirmationStep = ({ formik, locations, vehicleTypes }: Props) => {
+  const { brand, model, color, plates, mileage, notes, photos, locationId, vehicleTypeId } = formik.values;
+
+  const getLocationName = () => {
+      const loc = locations?.find(l => l.id == locationId);
+      return loc ? loc.name : `Cajón ${locationId}`;
+  };
+
+  const getVehicleTypeName = () => {
+      const type = vehicleTypes?.find(t => t.id == vehicleTypeId);
+      return type ? type.name : '';
+  };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 80 }}>
@@ -24,11 +36,11 @@ export const ConfirmationStep = ({ formik }: Props) => {
               <View style={styles.row}>
                   <View style={styles.infoBlock}>
                       <Text style={styles.label}>Placas</Text>
-                      <Text variant="titleLarge" style={styles.plate}>{plates}</Text>
+                      <Text variant="titleLarge" style={styles.plate}>{plates || 'SIN PLACAS'}</Text>
                   </View>
                   <View style={styles.infoBlock}>
-                      <Text style={styles.label}>Color</Text>
-                      <Text variant="bodyLarge">{color}</Text>
+                      <Text style={styles.label}>Tipo</Text>
+                      <Text variant="bodyLarge">{getVehicleTypeName()}</Text>
                   </View>
               </View>
               
@@ -38,6 +50,10 @@ export const ConfirmationStep = ({ formik }: Props) => {
                   <View style={styles.infoBlock}>
                       <Text style={styles.label}>Marca</Text>
                       <Text variant="bodyLarge">{brand}</Text>
+                  </View>
+                  <View style={styles.infoBlock}>
+                      <Text style={styles.label}>Color</Text>
+                      <Text variant="bodyLarge">{color}</Text>
                   </View>
                   <View style={styles.infoBlock}>
                       <Text style={styles.label}>Modelo</Text>
@@ -75,9 +91,7 @@ export const ConfirmationStep = ({ formik }: Props) => {
               <IconButton icon="map-marker" size={24} iconColor="#3b82f6" />
               <View>
                   <Text style={styles.label}>Ubicación Asignada</Text>
-                  <Text variant="titleMedium" style={{ fontWeight: 'bold' }}>{/* Map ID to Name logic if possible or just show ID */} Cajón {
-                        locationId
-                    }</Text>
+                  <Text variant="titleMedium" style={{ fontWeight: 'bold' }}>{getLocationName()}</Text>
               </View>
           </Surface>
       ) : null}

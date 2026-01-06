@@ -7,11 +7,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { VehicleEntry } from '../../../core/types/VehicleEntry';
 import LoaderComponent from '../../../shared/components/LoaderComponent';
 import { ActionModal } from '../components/ActionModal';
-import { finishKeyAssignment, getEntries } from '../services/EntriesService';
+import { finishKeyAssignment, getEntries, getUserVehicles } from '../services/EntriesService';
+import { useAppSelector } from '../../../core/store/hooks';
 
 export const EntriesScreen = () => {
   const navigation = useNavigation<any>();
   const insets = useSafeAreaInsets();
+  const { role, id } = useAppSelector(state => state.userState);
   const [entries, setEntries] = useState<VehicleEntry[]>([]);
   const [filteredEntries, setFilteredEntries] = useState<VehicleEntry[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -21,7 +23,16 @@ export const EntriesScreen = () => {
 
   const loadEntries = async () => {
     try {
-      const result = await getEntries();
+
+      console.log(role);
+
+      const isClient = role === 'USER';
+      if (isClient && !id) return;
+
+      const result = isClient
+        ? await getUserVehicles(Number(id))
+        : await getEntries();
+        
       console.log(result);  
       if (result && result.success && result.data) {
           setEntries(result.data);
@@ -191,15 +202,17 @@ export const EntriesScreen = () => {
                            <Text style={{ marginLeft: 6, color: '#d97706', fontWeight: 'bold', fontSize: 12 }}>Valet Buscando...</Text>
                        </View>
                   ) : (
-                      <Button 
-                        mode="text" 
-                        compact 
-                        labelStyle={{ fontSize: 12 }} 
-                        onPress={() => setActionEntry(item)}
-                        disabled={item.status !== 'ACTIVE' && item.status !== 'MOVED'}
-                      >
-                          Acciones
-                      </Button>
+                       role !== 'USER' && (
+                        <Button 
+                            mode="text" 
+                            compact 
+                            labelStyle={{ fontSize: 12 }} 
+                            onPress={() => setActionEntry(item)}
+                            disabled={item.status !== 'ACTIVE' && item.status !== 'MOVED'}
+                        >
+                            Acciones
+                        </Button>
+                      )
                   )}
               </View>
           )}
@@ -225,15 +238,17 @@ export const EntriesScreen = () => {
                            <Text style={{ marginLeft: 6, color: '#d97706', fontWeight: 'bold', fontSize: 12 }}>Valet Buscando...</Text>
                        </View>
                    ) : (
-                      <Button 
-                        mode="text" 
-                        compact 
-                        labelStyle={{ fontSize: 12 }} 
-                        onPress={() => setActionEntry(item)}
-                        disabled={item.status !== 'ACTIVE' && item.status !== 'MOVED'}
-                      >
-                          Acciones
-                      </Button>
+                      role == 'USER' && (
+                        <Button 
+                            mode="text" 
+                            compact 
+                            labelStyle={{ fontSize: 12 }} 
+                            onPress={() => setActionEntry(item)}
+                            disabled={item.status !== 'ACTIVE' && item.status !== 'MOVED'}
+                        >
+                            Acciones
+                        </Button>
+                      )
                   )}
               </View>
           )}
@@ -276,12 +291,14 @@ export const EntriesScreen = () => {
         />
       )}
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { bottom: insets.bottom + 20 }]}
-        color="white"
-        onPress={() => navigation.navigate('CREATE_ENTRY_SCREEN')}
-      />
+      {role !== 'USER' && (
+        <FAB
+            icon="plus"
+            style={[styles.fab, { bottom: insets.bottom + 20 }]}
+            color="white"
+            onPress={() => navigation.navigate('CREATE_ENTRY_SCREEN')}
+        />
+      )}
 
       <ActionModal 
         visible={!!actionEntry} 

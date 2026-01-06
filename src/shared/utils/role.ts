@@ -2,11 +2,11 @@ import { store } from '../../core/store/redux.config';
 
 export const getRoleValid = (role: string): boolean => {
   const state = store.getState();
-  const userRoles = state.userState.roles || [];
+  const userRole = state.userState.role;
 
-  if (!userRoles || userRoles.length === 0) {
+  if (!userRole) {
     return false;
   }
 
-  return userRoles.includes(role);
+  return userRole === role;
 };

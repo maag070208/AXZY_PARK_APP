@@ -5,10 +5,15 @@ import { EntriesStack } from '../../screens/entries/stack/EntriesStack';
 import { ExitsStack } from '../../screens/exits/stack/ExitsStack';
 import HomeStack from '../../screens/home/stack/HomeStack';
 import { MovementsStack } from '../../screens/movements/stack/MovementsStack';
+import { useAppSelector } from '../../core/store/hooks';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  const { role } = useAppSelector(state => state.userState);
+  const isRestricted = role === 'USER';
+  const isOperator = role === 'OPERATOR';
+
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen
@@ -16,7 +21,9 @@ const TabNavigator = () => {
         component={HomeStack}
         options={({ route }) => ({
           title: 'Inicio',
-          tabBarIcon: ({ color }) => <Icon name="home" size={24} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Icon name="home" size={24} color={color} />
+          ),
         })}
       />
 
@@ -32,30 +39,37 @@ const TabNavigator = () => {
         })}
       />
 
-      <Tab.Screen
-        name="EXITS_STACK"
-        component={ExitsStack}
-        options={({ route }) => ({
-          title: 'Salidas',
-          tabBarStyle: { display: 'none' },
-          tabBarIcon: ({ color }) => (
-            <Icon name="car-arrow-left" size={24} color={color} />
-          ),
-        })}
-      />
+      {!isRestricted && (
+        <>
+          <Tab.Screen
+            name="EXITS_STACK"
+            component={ExitsStack}
+            options={({ route }) => ({
+              title: 'Salidas',
+              tabBarStyle: { display: 'none' },
+              tabBarIcon: ({ color }) => (
+                <Icon name="car-arrow-left" size={24} color={color} />
+              ),
+            })}
+          />
 
-      <Tab.Screen
-        name="MOVEMENTS_STACK"
-        component={MovementsStack}
-        options={({ route }) => ({
-          title: 'Movimientos',
-          tabBarStyle: { display: 'none' },
-          tabBarIcon: ({ color }) => (
-            <Icon name="clipboard-text-clock-outline" size={24} color={color} />
-          ),
-        })}
-      />
-
+          {!isOperator && <Tab.Screen
+            name="MOVEMENTS_STACK"
+            component={MovementsStack}
+            options={({ route }) => ({
+              title: 'Movimientos',
+              tabBarStyle: { display: 'none' },
+              tabBarIcon: ({ color }) => (
+                <Icon
+                  name="clipboard-text-clock-outline"
+                  size={24}
+                  color={color}
+                />
+              ),
+            })}
+          />  }
+        </>
+      )}
     </Tab.Navigator>
   );
 };

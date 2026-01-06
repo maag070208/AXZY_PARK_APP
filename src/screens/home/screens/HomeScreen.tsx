@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { useAppDispatch } from '../../../core/store/hooks';
+import { useAppSelector } from '../../../core/store/hooks';
 import { useAppNavigation } from '../../../navigation/hooks/useAppNavigation';
 import ModernStyles from '../../../shared/theme/app.styles';
 import { EntrySummaryCard } from '../components/EntrySummaryCard';
@@ -8,10 +8,14 @@ import { ExitsSummaryCard } from '../components/ExitsSummaryCard';
 import { KeyAssignmentsSummaryCard } from '../components/KeyAssignmentsSummaryCard';
 import { LocationsSummaryCard } from '../components/LocationsSummaryCard';
 import { MovementsSummaryCard } from '../components/MovementsSummaryCard';
+import ReportsSummaryCard from '../components/ReportsSummaryCard';
+import UsersSummaryCard from '../components/UsersSummaryCard';
 
 export const HomeScreen = () => {
   const { navigateToScreen } = useAppNavigation();
-  const dispatch = useAppDispatch();
+  const { role } = useAppSelector(state => state.userState);
+  const isRestricted = role === 'USER';
+  const isAdmin = role === 'ADMIN';
 
   return (
     <View style={[ModernStyles.screenContainer, styles.container]}>
@@ -24,18 +28,35 @@ export const HomeScreen = () => {
         <EntrySummaryCard 
           onPress={() => navigateToScreen('ENTRIES_STACK', 'ENTRIES_MAIN')} 
         />
-        <ExitsSummaryCard 
-          onPress={() => navigateToScreen('EXITS_STACK', 'EXITS_MAIN')} 
-        />
-         <LocationsSummaryCard 
-          onPress={() => navigateToScreen('LOCATIONS_STACK', 'LOCATIONS_MAIN')} 
-        />
-        <KeyAssignmentsSummaryCard 
-          onPress={() => navigateToScreen('KEY_ASSIGNMENTS_STACK', 'KEY_ASSIGNMENTS_MAIN')} 
-        />
-        <MovementsSummaryCard 
-          onPress={() => navigateToScreen('MOVEMENTS_STACK', 'MOVEMENTS_MAIN')} 
-        />
+        
+        {/* Only show other cards if NOT restricted */}
+        {!isRestricted && (
+            <>
+                <ExitsSummaryCard 
+                onPress={() => navigateToScreen('EXITS_STACK', 'EXITS_MAIN')} 
+                />
+                <LocationsSummaryCard 
+                onPress={() => navigateToScreen('LOCATIONS_STACK', 'LOCATIONS_MAIN')} 
+                />
+            </>
+        )}
+
+        {isAdmin && (
+            <>
+                <KeyAssignmentsSummaryCard 
+                onPress={() => navigateToScreen('KEY_ASSIGNMENTS_STACK', 'KEY_ASSIGNMENTS_MAIN')} 
+                />
+                <MovementsSummaryCard 
+                onPress={() => navigateToScreen('MOVEMENTS_STACK', 'MOVEMENTS_MAIN')} 
+                />
+                <UsersSummaryCard 
+                onPress={() => navigateToScreen('USERS_STACK', 'USERS_MAIN')} 
+                />
+                <ReportsSummaryCard 
+                onPress={() => navigateToScreen('REPORTS_STACK', 'REPORTS_MAIN')} 
+                />
+            </>
+        )}
       </ScrollView>
     </View>
   );

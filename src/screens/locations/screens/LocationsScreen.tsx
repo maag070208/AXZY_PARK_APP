@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Alert, FlatList, StyleSheet, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Alert, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import {
   ActivityIndicator,
   // Card, // Removed unused import
@@ -7,22 +7,26 @@ import {
   IconButton,
   Modal,
   Portal,
-  Text,
   Searchbar,
+  Text,
 } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { theme } from '../../../shared/theme/theme';
+import { LocationFormModal } from '../components/LocationFormModal';
 import {
   createLocation,
   deleteLocation,
   getLocations,
   updateLocation,
 } from '../service/location.service';
-import { ILocation, ILocationCreate } from '../type/location.types';
-import { LocationFormModal } from '../components/LocationFormModal';
-import { theme } from '../../../shared/theme/theme';
+import { ILocation } from '../type/location.types';
+
+import { useAppSelector } from '../../../core/store/hooks';
 
 export const LocationsScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
+  const { role } = useAppSelector(state => state.userState);
+  const canEdit = role !== 'OPERATOR';
   const [locations, setLocations] = useState<ILocation[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -135,22 +139,24 @@ export const LocationsScreen = ({ navigation }: any) => {
            </View>
        </TouchableOpacity>
 
-       <View style={styles.actions}>
-          <IconButton
-            icon="pencil"
-            size={20}
-            iconColor="#94a3b8"
-            onPress={() => handleEdit(item)}
-            style={{margin: 0}}
-          />
-          <IconButton
-            icon="delete"
-            size={20}
-            iconColor="#ef4444"
-            onPress={() => handleDelete(item)}
-            style={{margin: 0}}
-          />
-       </View>
+       {canEdit && (
+         <View style={styles.actions}>
+            <IconButton
+              icon="pencil"
+              size={20}
+              iconColor="#94a3b8"
+              onPress={() => handleEdit(item)}
+              style={{margin: 0}}
+            />
+            <IconButton
+              icon="delete"
+              size={20}
+              iconColor="#ef4444"
+              onPress={() => handleDelete(item)}
+              style={{margin: 0}}
+            />
+         </View>
+       )}
     </View>
   );
 
@@ -200,15 +206,17 @@ export const LocationsScreen = ({ navigation }: any) => {
         />
       )}
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { bottom: insets.bottom + 20 }]}
-        onPress={handleCreate}
-        color="white"
-        mode="flat"
-        size="medium"
-        animated={true}
-      />
+      {canEdit && (
+        <FAB
+          icon="plus"
+          style={[styles.fab, { bottom: insets.bottom + 20 }]}
+          onPress={handleCreate}
+          color="white"
+          mode="flat"
+          size="medium"
+          animated={true}
+        />
+      )}
 
       <LocationFormModal
         visible={modalVisible}

@@ -51,6 +51,16 @@ export type RootStackParamList = {
   MOVEMENTS_STACK: {
     MOVEMENTS_MAIN: ScreenParams;
   };
+  USERS_STACK: {
+    USERS_MAIN: ScreenParams;
+    CREATE_USER_SCREEN: ScreenParams;
+  };
+  REPORTS_STACK: {
+    REPORTS_MAIN: ScreenParams;
+  };
+  CONFIG_STACK: {
+    CONFIG_MAIN: ScreenParams;
+  };
 };
 
 export type StackNames = keyof RootStackParamList;
@@ -89,5 +99,15 @@ export const AppStacks: RootStackParamList = {
   },
   MOVEMENTS_STACK: {
     MOVEMENTS_MAIN: {},
+  },
+  USERS_STACK: {
+    USERS_MAIN: {},
+    CREATE_USER_SCREEN: {},
+  },
+  REPORTS_STACK: {
+    REPORTS_MAIN: {},
+  },
+  CONFIG_STACK: {
+    CONFIG_MAIN: {},
   },
 };

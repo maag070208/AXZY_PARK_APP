@@ -47,4 +47,9 @@ export interface VehicleEntry {
         toLocation?: { id: number; name: string; aisle: string; spot: string; };
         createdAt: string;
     }[];
+    vehicleType?: {
+        id: number;
+        name: string;
+        cost: number;
+    };
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Avatar, Button, Card, Divider, IconButton, Menu, Modal, Portal, Text } from 'react-native-paper';
+import { ActivityIndicator, Avatar, Button, Card, Divider, IconButton, Modal, Portal, Text } from 'react-native-paper';
+import { Dropdown } from 'react-native-paper-dropdown';
 import { useAppDispatch, useAppSelector } from '../../../core/store/hooks';
 import { getUsers } from '../../users/services/UserService';
 import { getLocations } from '../../locations/service/location.service';
@@ -30,9 +31,7 @@ export const ActionModal = ({ visible, onDismiss, entry, onSuccess }: Props) => 
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Menus
-  const [showOperatorMenu, setShowOperatorMenu] = useState(false);
-  const [showLocationMenu, setShowLocationMenu] = useState(false);
+  // Menus removed in favor of Dropdown
 
   useEffect(() => {
     if (visible && entry) {
@@ -159,42 +158,38 @@ export const ActionModal = ({ visible, onDismiss, entry, onSuccess }: Props) => 
 
                         {actionType === 'MOVEMENT' && (
                             <View style={styles.formGroup}>
-                                <Text style={styles.label}>Nueva Ubicación</Text>
-                                <Menu
-                                    visible={showLocationMenu}
-                                    onDismiss={() => setShowLocationMenu(false)}
-                                    anchor={
-                                        <Button mode="outlined" onPress={() => setShowLocationMenu(true)} contentStyle={{ justifyContent: 'flex-start' }} style={styles.dropdownBtn}>
-                                            {getLocationName()}
-                                        </Button>
-                                    }
-                                >
-                                    <ScrollView style={{ maxHeight: 200 }}>
-                                    {locations.map(l => (
-                                        <Menu.Item key={l.id} onPress={() => { setSelectedLocationId(l.id); setShowLocationMenu(false); }} title={l.name} />
-                                    ))}
-                                    </ScrollView>
-                                </Menu>
+                                <Dropdown
+                                    label="Ubicación"
+                                    hideMenuHeader
+                                    placeholder="Seleccionar Ubicación"
+                                    options={locations.map(l => ({ label: l.name, value: String(l.id) }))}
+                                    value={selectedLocationId ? String(selectedLocationId) : undefined}
+                                    onSelect={(val) => setSelectedLocationId(Number(val))}
+                                    mode="outlined"
+                                       menuContentStyle={{ 
+                    backgroundColor: '#fff',
+                    padding: 0,
+                    borderRadius: 12,
+                 }}
+                                />
                             </View>
                         )}
 
                         <View style={styles.formGroup}>
-                            <Text style={styles.label}>Operador Responsable</Text>
-                            <Menu
-                                visible={showOperatorMenu}
-                                onDismiss={() => setShowOperatorMenu(false)}
-                                anchor={
-                                    <Button mode="outlined" onPress={() => setShowOperatorMenu(true)} contentStyle={{ justifyContent: 'flex-start' }} style={styles.dropdownBtn}>
-                                        {getOperatorName()}
-                                    </Button>
-                                }
-                            >
-                                <ScrollView style={{ maxHeight: 200 }}>
-                                {operators.map(o => (
-                                    <Menu.Item key={o.id} onPress={() => { setSelectedOperatorId(o.id); setShowOperatorMenu(false); }} title={`${o.name} ${o.lastName}`} />
-                                ))}
-                                </ScrollView>
-                            </Menu>
+                            <Dropdown
+                                label="Operador Responsable"
+                                placeholder="Seleccionar Operador"
+                                hideMenuHeader
+                                options={operators.map(o => ({ label: `${o.name} ${o.lastName}`, value: String(o.id) }))}
+                                value={selectedOperatorId ? String(selectedOperatorId) : undefined}
+                                onSelect={(val) => setSelectedOperatorId(Number(val))}
+                                mode="outlined"
+                                   menuContentStyle={{ 
+                    backgroundColor: '#fff',
+                    padding: 0,
+                    borderRadius: 12,
+                 }}
+                            />
                         </View>
 
                         <Button 

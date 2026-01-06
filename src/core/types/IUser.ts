@@ -10,4 +10,8 @@ export interface IAuthToken {
   // Metadata
   iat: number;
   exp: number;
+  
+  // Operator info
+  shiftStart?: string;
+  shiftEnd?: string;
 }

@@ -47,7 +47,6 @@ export const PhotoUploadStep = ({ title, categories, formik }: Props) => {
   return (
     <View style={styles.container}>
       <Text variant="headlineSmall" style={styles.title}>{title}</Text>
-      <Text style={styles.subtitle}>Capture las evidencias correspondientes</Text>
 
       <View style={styles.grid}>
           {categories.map((cat) => {

@@ -11,6 +11,7 @@ import { ConfirmationStep } from '../components/steps/ConfirmationStep';
 import { ExtrasStep } from '../components/steps/ExtrasStep';
 import { getLocations, Location } from '../../locations/services/LocationsService'; 
 import { createEntry } from '../services/EntriesService';
+import { getVehicleTypes, VehicleType } from '../../config/services/VehicleTypesService';
 import { showToast } from '../../../core/store/slices/toast.slice';
 import { useAppDispatch, useAppSelector } from '../../../core/store/hooks';
 import CustomKeyboardAvoidingScrollView from '../../../shared/components/CustomKeyboardAvoidingScrollView';
@@ -21,6 +22,7 @@ export const CreateEntryScreen = () => {
   const dispatch = useAppDispatch();
   const [step, setStep] = useState(0);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [vehicleTypes, setVehicleTypes] = useState<VehicleType[]>([]);
   const operatorUserId  = useAppSelector((state) => state.userState.id);
   
   // User Selection State
@@ -44,25 +46,35 @@ export const CreateEntryScreen = () => {
             setLocations(res.data);
         }
     });
+    getVehicleTypes().then(res => {
+        if (res && res.data) {
+            setVehicleTypes(res.data);
+        }
+    });
   }, []);
 
   const formik = useFormik({
     initialValues: {
       locationId: '',
+      vehicleTypeId: '',
       brand: '',
       model: '',
       color: '',
       plates: '',
+      series: '', // Added series
       mileage: '',
       notes: '',
       photos: {} as Record<string, string>,
       extrasList: [] as any[], 
     },
     validationSchema: Yup.object({
+        locationId: Yup.string().required('Ubicación requerida'),
+        vehicleTypeId: Yup.string().required('Tipo de vehículo requerido'),
         brand: Yup.string().required('Marca es requerida'),
         model: Yup.string().required('Modelo es requerido'),
         color: Yup.string().required('Color es requerido'),
         plates: Yup.string().notRequired(),
+        series: Yup.string().notRequired(),
         mileage: Yup.number().typeError('Debe ser número'),
     }),
     onSubmit: async (values) => {
@@ -77,11 +89,13 @@ export const CreateEntryScreen = () => {
             formData.append("operatorUserId", String(operatorUserId));
             
             if (values.locationId) formData.append("locationId", values.locationId);
-
+            if (values.vehicleTypeId) formData.append("vehicleTypeId", values.vehicleTypeId);
+            
             formData.append("brand", values.brand);
             formData.append("model", values.model);
             formData.append("color", values.color);
             if (values.plates) formData.append("plates", values.plates);
+            if (values.series) formData.append("series", values.series); // Added series
 
             if (values.mileage) formData.append("mileage", String(values.mileage));
             if (values.notes) formData.append("notes", values.notes);
@@ -141,7 +155,7 @@ export const CreateEntryScreen = () => {
           const errors = startValidation();
           if (Object.keys(errors).length > 0) {
               formik.setTouched({
-                  brand: true, model: true, color: true
+                  locationId: true, vehicleTypeId: true, brand: true, model: true, color: true
               });
               return;
           }
@@ -157,6 +171,8 @@ export const CreateEntryScreen = () => {
   const startValidation = () => {
       formik.validateForm(); 
       const errors: any = {};
+      if (!formik.values.locationId) errors.locationId = true;
+      if (!formik.values.vehicleTypeId) errors.vehicleTypeId = true;
       if (!formik.values.brand) errors.brand = true;
       if (!formik.values.model) errors.model = true;
       if (!formik.values.color) errors.color = true;
@@ -169,7 +185,10 @@ export const CreateEntryScreen = () => {
               return (
                   <UserSelectionStep 
                     selectedUserId={selectedUserId}
-                    setSelectedUserId={setSelectedUserId}
+                    setSelectedUserId={(id) => {
+                        setSelectedUserId(id);
+                        if (id) setStep(1); // Auto-advance
+                    }}
                     users={users}
                     setUsers={setUsers}
                     onVehicleSelected={(v) => {
@@ -192,17 +211,17 @@ export const CreateEntryScreen = () => {
                   />
               );
           case 1:
-              return <GeneralDataStep formik={formik} locations={locations} />;
+              return <GeneralDataStep formik={formik} locations={locations} vehicleTypes={vehicleTypes} />;
           case 2:
-              return <PhotoUploadStep title="Fotos Exteriores" categories={[{ key: 'frontal', label: 'Frontal' }, { key: 'trasera', label: 'Trasera' }]} formik={formik} />;
+              return <PhotoUploadStep title="" categories={[{ key: 'frontal', label: 'Frontal' }, { key: 'trasera', label: 'Trasera' }]} formik={formik} />;
           case 3:
-              return <PhotoUploadStep title="Fotos Laterales" categories={[{ key: 'lateral_derecho', label: 'Lateral Derecho' }, { key: 'lateral_izquierdo', label: 'Lateral Izquierdo' }]} formik={formik} />;
+              return <PhotoUploadStep title="" categories={[{ key: 'lateral_derecho', label: 'Lateral Derecho' }, { key: 'lateral_izquierdo', label: 'Lateral Izquierdo' }]} formik={formik} />;
           case 4:
-              return <PhotoUploadStep title="Interior" categories={[{ key: 'interior', label: 'Interior' }]} formik={formik} />;
+              return <PhotoUploadStep title="" categories={[{ key: 'interior', label: 'Interior' }]} formik={formik} />;
           case 5:
               return <ExtrasStep formik={formik} />;
           case 6:
-              return <ConfirmationStep formik={formik} />;
+              return <ConfirmationStep formik={formik} locations={locations} vehicleTypes={vehicleTypes} />;
           default:
               return null;
       }

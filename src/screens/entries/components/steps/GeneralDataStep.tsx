@@ -1,59 +1,65 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { TextInput, Text, SegmentedButtons, HelperText, Menu, Button, Divider } from 'react-native-paper';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { HelperText, Text, TextInput } from 'react-native-paper';
+import { Dropdown } from 'react-native-paper-dropdown';
 
 interface Props {
   formik: any;
   locations: any[];
+  vehicleTypes: any[];
 }
 
-export const GeneralDataStep = ({ formik, locations }: Props) => {
-  const [visible, setVisible] = React.useState(false);
-
-  const openMenu = () => setVisible(true);
-  const closeMenu = () => setVisible(false);
-
+export const GeneralDataStep = ({ formik, locations, vehicleTypes }: Props) => {
   // Group locations (e.g., by aisle if name is like "A-1") or just list them
   // Assuming simple list for now
-  const selectedLocation = locations.find(l => l.id === formik.values.locationId);
+
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
       {/* Location Section */}
       <View style={styles.section}>
-          <Text variant="titleMedium" style={styles.sectionTitle}>Ubicación</Text>
           <View style={styles.menuContainer}>
-            <Menu
-                visible={visible}
-                onDismiss={closeMenu}
-                anchor={
-                    <Button 
-                        mode="outlined" 
-                        onPress={openMenu} 
-                        style={styles.locationButton}
-                        contentStyle={styles.locationButtonContent}
-                        icon="map-marker"
-                    >
-                        {selectedLocation ? selectedLocation.name : 'Seleccionar Cajón'}
-                    </Button>
-                }
-                style={{ width: '90%' }}
-            >
-                <ScrollView style={{ maxHeight: 300 }}>
-                    {locations.map((loc) => (
-                        <Menu.Item 
-                            key={loc.id} 
-                            onPress={() => {
-                                formik.setFieldValue('locationId', loc.id);
-                                closeMenu();
-                            }} 
-                            title={loc.name}
-                            leadingIcon={formik.values.locationId === loc.id ? 'check' : undefined}
-                         />
-                    ))}
-                    {locations.length === 0 && <Menu.Item title="No hay lugares disponibles" disabled />}
-                </ScrollView>
-            </Menu>
+            <Dropdown
+                label="Ubicación"
+                hideMenuHeader
+                placeholder="Seleccionar Cajón"
+                options={locations.map(l => ({ label: l.name, value: String(l.id) }))}
+                value={formik.values.locationId ? String(formik.values.locationId) : undefined}
+                onSelect={(val) => formik.setFieldValue('locationId', Number(val))}
+                mode="outlined"
+                error={formik.touched.locationId && !!formik.errors.locationId}
+                menuContentStyle={{ 
+                    backgroundColor: '#fff',
+                    padding: 0,
+                    borderRadius: 12,
+                 }}
+            />
+            {formik.touched.locationId && formik.errors.locationId && (
+                <HelperText type="error">{formik.errors.locationId}</HelperText>
+            )}
+          </View>
+      </View>
+
+      <View style={styles.section}>
+          <View style={styles.menuContainer}>
+            <Dropdown
+                label="Tipo de Vehículo"
+                placeholder="Seleccionar Tipo"
+                hideMenuHeader
+                options={vehicleTypes.map(t => ({ label: `${t.name} - $${t.cost}`, value: String(t.id) }))}
+                value={formik.values.vehicleTypeId ? String(formik.values.vehicleTypeId) : undefined}
+                onSelect={(val) => formik.setFieldValue('vehicleTypeId', Number(val))}
+                mode="outlined"
+                error={formik.touched.vehicleTypeId && !!formik.errors.vehicleTypeId}
+                menuContentStyle={{ 
+                    backgroundColor: '#fff',
+                    padding: 0,
+                    borderRadius: 12,
+                 }}
+            />
+            {formik.touched.vehicleTypeId && formik.errors.vehicleTypeId && (
+                <HelperText type="error">{formik.errors.vehicleTypeId}</HelperText>
+            )}
           </View>
       </View>
 
@@ -74,6 +80,19 @@ export const GeneralDataStep = ({ formik, locations }: Props) => {
             left={<TextInput.Icon icon="card-text-outline" color="#64748b" />}
           />
           {formik.touched.plates && formik.errors.plates && <HelperText type="error">{formik.errors.plates}</HelperText>}
+
+          <TextInput
+            label="Serie (Opcional)"
+            value={formik.values.series}
+            onChangeText={formik.handleChange('series')}
+            onBlur={formik.handleBlur('series')}
+            mode="outlined"
+            style={styles.input}
+            contentStyle={{ letterSpacing: 1 }}
+            error={formik.touched.series && !!formik.errors.series}
+            autoCapitalize="characters"
+            left={<TextInput.Icon icon="barcode" color="#64748b" />}
+          />
 
           <View style={styles.row}>
               <View style={styles.halfInput}>

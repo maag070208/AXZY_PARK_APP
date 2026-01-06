@@ -15,7 +15,6 @@ interface Props {
 const UserSchema = Yup.object().shape({
   name: Yup.string().required('Nombre es requerido'),
   paternalSurname: Yup.string().required('Apellido Paterno es requerido'),
-  maternalSurname: Yup.string().required('Apellido Materno es requerido'),
   email: Yup.string().email('Email inválido').required('Email es requerido'),
   password: Yup.string().min(6, 'Mínimo 6 caracteres').required('Contraseña es requerida'),
   confirmPassword: Yup.string()
@@ -26,6 +25,7 @@ const UserSchema = Yup.object().shape({
 export const NewUserForm = ({ onCancel, onSuccess }: Props) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -70,8 +70,6 @@ export const NewUserForm = ({ onCancel, onSuccess }: Props) => {
 
   return (
     <View style={styles.container}>
-      <Text variant="titleMedium" style={styles.title}>Nuevo Cliente</Text>
-      
       <TextInput
         label="Nombre"
         value={formik.values.name}
@@ -125,8 +123,14 @@ export const NewUserForm = ({ onCancel, onSuccess }: Props) => {
         onChangeText={formik.handleChange('password')}
         onBlur={formik.handleBlur('password')}
         mode="outlined"
-        secureTextEntry
+        secureTextEntry={showPassword}
         error={formik.touched.password && !!formik.errors.password}
+        right={
+          <TextInput.Icon
+            icon={showPassword ? 'eye-off' : 'eye'}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        }
         style={styles.input}
       />
 
@@ -136,7 +140,7 @@ export const NewUserForm = ({ onCancel, onSuccess }: Props) => {
         onChangeText={formik.handleChange('confirmPassword')}
         onBlur={formik.handleBlur('confirmPassword')}
         mode="outlined"
-        secureTextEntry
+        secureTextEntry={showPassword}
         error={formik.touched.confirmPassword && !!formik.errors.confirmPassword}
         style={styles.input}
       />
@@ -158,13 +162,16 @@ export const NewUserForm = ({ onCancel, onSuccess }: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: 24,
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 16, // Softer corners
   },
   title: {
-    marginBottom: 16,
+    marginBottom: 24,
     fontWeight: 'bold',
+    fontSize: 24,
+    color: '#0f172a',
+    textAlign: 'center',
   },
   input: {
     marginBottom: 8,
@@ -172,7 +179,7 @@ const styles = StyleSheet.create({
   },
   row: {
       flexDirection: 'row',
-      gap: 8,
+      gap: 12, // Increased gap
   },
   col: {
       flex: 1,
@@ -180,10 +187,11 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 16,
-    gap: 8,
+    marginTop: 24, // More breathing room
+    gap: 12,
   },
   button: {
       flex: 1,
+      borderRadius: 12, // More rounded
   }
 });

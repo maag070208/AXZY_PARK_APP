@@ -123,10 +123,7 @@ export const UserSelectionStep = ({ selectedUserId, setSelectedUserId, users, se
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-          <Text variant="headlineSmall" style={styles.title}>Seleccionar Cliente</Text>
-          <Text variant="bodyMedium" style={styles.subtitle}>Busca por nombre o placa del vehículo</Text>
-      </View>
+     
 
       {!selectedUserId && (
         <Searchbar

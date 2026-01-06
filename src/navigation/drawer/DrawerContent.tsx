@@ -1,60 +1,162 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Avatar, Icon, Text } from 'react-native-paper';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Icon, IconButton, Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppDispatch, useAppSelector } from '../../core/store/hooks';
 import { logout } from '../../core/store/slices/user.slice';
 import { RootState } from '../../core/store/redux.config';
 
+/* ======================================================
+   TYPES
+====================================================== */
+type Role = 'ADMIN' | 'OPERATOR' | 'USER';
+
+interface MenuItem {
+  label: string;
+  icon: string;
+  route: string;
+  screen: string;
+  roles: Role[];
+}
+
+/* ======================================================
+   MENU CONFIG
+====================================================== */
+const MENU_ITEMS: MenuItem[] = [
+  {
+    label: 'Inicio',
+    icon: 'home-outline',
+    route: 'Tabs',
+    screen: 'HOME_STACK',
+    roles: ['ADMIN', 'OPERATOR', 'USER'],
+  },
+  {
+    label: 'Entradas',
+    icon: 'car-arrow-right',
+    route: 'ENTRIES_STACK',
+    screen: 'ENTRIES_MAIN',
+    roles: ['ADMIN', 'OPERATOR', 'USER'],
+  },
+  {
+    label: 'Salidas',
+    icon: 'car-arrow-left',
+    route: 'EXITS_STACK',
+    screen: 'EXITS_MAIN',
+    roles: ['ADMIN', 'OPERATOR'],
+  },
+  {
+    label: 'Ubicaciones',
+    icon: 'map-marker-outline',
+    route: 'LOCATIONS_STACK',
+    screen: 'LOCATIONS_MAIN',
+    roles: ['ADMIN', 'OPERATOR'],
+  },
+  {
+    label: 'Asignación de Llaves',
+    icon: 'key-outline',
+    route: 'KEY_ASSIGNMENTS_STACK',
+    screen: 'KEY_ASSIGNMENTS_MAIN',
+    roles: ['ADMIN']
+  },
+  {
+    label: 'Movimientos',
+    icon: 'car-shift-pattern',
+    route: 'MOVEMENTS_STACK',
+    screen: 'MOVEMENTS_MAIN',
+    roles: ['ADMIN']
+  },
+  {
+    label: 'Usuarios',
+    icon: 'account-group',
+    route: 'USERS_STACK',
+    screen: 'USERS_MAIN',
+    roles: ['ADMIN'],
+  },
+  {
+    label: 'Reportes',
+    icon: 'chart-bar',
+    route: 'REPORTS_STACK',
+    screen: 'REPORTS_MAIN',
+    roles: ['ADMIN']
+  },
+  {
+    label: 'Configuración',
+    icon: 'cog-outline',
+    route: 'CONFIG_STACK',
+    screen: 'CONFIG_MAIN',
+    roles: ['ADMIN'],
+  },
+];
+
+/* ======================================================
+   COMPONENT
+====================================================== */
 const DrawerContent = ({ navigation }: { navigation: any }) => {
   const dispatch = useAppDispatch();
   const insets = useSafeAreaInsets();
+
   const userState = useAppSelector((state: RootState) => state.userState);
 
-  const menuItems = [
-    { label: 'Inicio', icon: 'home-outline', route: 'Tabs', screen: 'HOME_STACK' },
-    { label: 'Entradas', icon: 'car-arrow-right', route: 'ENTRIES_STACK', screen: 'ENTRIES_MAIN' },
-    { label: 'Salidas', icon: 'car-arrow-left', route: 'EXITS_STACK', screen: 'EXITS_MAIN' },
-    { label: 'Ubicaciones', icon: 'map-marker-outline', route: 'LOCATIONS_STACK', screen: 'LOCATIONS_MAIN' },
-    { label: 'Asignación de Llaves', icon: 'key-outline', route: 'KEY_ASSIGNMENTS_STACK', screen: 'KEY_ASSIGNMENTS_MAIN' },
-    { label: 'Movimientos', icon: 'car-shift-pattern', route: 'MOVEMENTS_STACK', screen: 'MOVEMENTS_MAIN' },
-  ];
+  const userRole = userState.role;
+
+  const filteredMenuItems = MENU_ITEMS.filter(item =>
+    item.roles.includes(userRole as any) 
+  );
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
+      {/* ================= HEADER ================= */}
       <View style={styles.header}>
         <View style={styles.avatarContainer}>
           <Text style={styles.avatarText}>
-              {userState.fullName?.charAt(0).toUpperCase() || 'U'}
+            {userState.fullName?.charAt(0).toUpperCase() || 'U'}
           </Text>
         </View>
-        <View>
-            <Text variant="titleMedium" style={styles.userName}>{userState.fullName || 'Usuario'}</Text>
-            <Text variant="bodySmall" style={styles.userRole}>{userState.roles?.[0] || 'Operador'}</Text>
+
+        <View style={{ flex: 1 }}>
+          <Text variant="titleMedium" style={styles.userName}>
+            {userState.fullName || 'Usuario'}
+          </Text>
+          <Text variant="bodySmall" style={styles.userRole}>
+            {userState.role}
+          </Text>
         </View>
+
+        <IconButton
+          icon="pencil"
+          size={20}
+          iconColor="#64748b"
+          onPress={() => navigation.navigate('PROFILE_SCREEN')}
+        />
       </View>
 
       <View style={styles.divider} />
 
-      {/* Menu Items */}
-      <View style={styles.menuContainer}>
-        {menuItems.map((item, index) => (
+      {/* ================= MENU ================= */}
+      <ScrollView
+        style={styles.menuContainer}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
+        {filteredMenuItems.map((item, index) => (
           <TouchableOpacity
             key={index}
             style={styles.menuItem}
-            onPress={() => navigation.navigate(item.route, { screen: item.screen })}
+            onPress={() =>
+              navigation.navigate(item.route, { screen: item.screen })
+            }
           >
             <View style={styles.iconBox}>
-                <Icon source={item.icon} size={22} color="#475569" />
+              <Icon source={item.icon} size={22} color="#475569" />
             </View>
+
             <Text style={styles.menuLabel}>{item.label}</Text>
+
             <Icon source="chevron-right" size={16} color="#cbd5e1" />
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
 
-      {/* Footer */}
+      {/* ================= FOOTER ================= */}
       <View style={[styles.footer, { paddingBottom: insets.bottom + 20 }]}>
         <TouchableOpacity
           style={styles.logoutBtn}
@@ -63,6 +165,7 @@ const DrawerContent = ({ navigation }: { navigation: any }) => {
           <Icon source="logout" size={20} color="#ef4444" />
           <Text style={styles.logoutText}>Cerrar Sesión</Text>
         </TouchableOpacity>
+
         <Text style={styles.versionText}>v1.0.0</Text>
       </View>
     </View>
@@ -71,6 +174,9 @@ const DrawerContent = ({ navigation }: { navigation: any }) => {
 
 export default DrawerContent;
 
+/* ======================================================
+   STYLES
+====================================================== */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -103,6 +209,7 @@ const styles = StyleSheet.create({
   },
   userRole: {
     color: '#64748b',
+    textTransform: 'capitalize',
   },
   divider: {
     height: 1,

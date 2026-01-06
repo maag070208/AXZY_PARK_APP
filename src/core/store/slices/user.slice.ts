@@ -7,7 +7,7 @@ export interface IUserState {
   username: string | null;
   email: string | null;
   fullName: string | null;
-  roles: string[];
+  role: string | null;
   token: string | null;
   isSignedIn: boolean;
 }
@@ -17,7 +17,7 @@ const initialState: IUserState = {
   username: null,
   email: null,
   fullName: null,
-  roles: [],
+  role: null ,
   token: null,
   isSignedIn: false,
 };
@@ -35,7 +35,7 @@ export const userSlice = createSlice({
       state.username = decoded.username;
       state.email = decoded.email;
       state.fullName = `${decoded.name} ${decoded.lastName}`;
-      state.roles = [decoded.role]; // JWT has single role string, state expects array
+      state.role = decoded.role;
 
       state.isSignedIn = true;
       state.token = action.payload;

@@ -1,6 +1,4 @@
-
-
-const BASE_IP = '192.168.1.100';
+const BASE_IP = '192.168.0.9';
 const BASE_PORT = '4444';
 
 const BASE_URL = `https://axzy-park-api.onrender.com/api/v1`;

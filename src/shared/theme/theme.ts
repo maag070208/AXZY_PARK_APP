@@ -3,101 +3,103 @@ import { StyleSheet } from 'react-native';
 
 export const theme = {
   colors: {
-    activeSubstanceLink: '#4dd2db', // Actualizado al nuevo primario
-    addressButton: '#4dd2db', // Actualizado al nuevo primario
-    romaCard: '#4dd2db', // Actualizado al nuevo primario
+    // NUEVA PALETA BASADA EN EL LOGO PARKI
+    activeSubstanceLink: '#007BFF', // Azul vibrante del degradado
+    addressButton: '#007BFF',
+    romaCard: '#007BFF',
     onRomaCard: '#FFFFFF',
-    paragraph: '#666',
+    paragraph: '#344054',
 
-    // COLOR PRIMARIO ACTUALIZADO
-    primary: '#4dd2db',
-    onPrimary: '#FFFFFF', // CAMBIADO A BLANCO para texto de botones
-    primaryContainer: '#d9f7f9',
-    onPrimaryContainer: '#002022',
+    // COLOR PRIMARIO (Azul Vibrante del degradado superior)
+    primary: '#007BFF', 
+    onPrimary: '#FFFFFF',
+    primaryContainer: '#E0F0FF',
+    onPrimaryContainer: '#001D3D',
 
-    secondary: '#767676',
+    // COLOR SECUNDARIO (Azul Marino del texto "Parki")
+    secondary: '#1D2B3A', 
     onSecondary: '#FFFFFF',
-    secondaryContainer: '#e8f4f5',
-    onSecondaryContainer: '#1a1e1e',
+    secondaryContainer: '#F0F4F8',
+    onSecondaryContainer: '#101828',
 
-    tertiary: '#006874',
+    // TERCIARIO (Azul Celeste de la parte superior del pin)
+    tertiary: '#48CAE4',
     onTertiary: '#FFFFFF',
-    tertiaryContainer: '#97f0ff',
-    onTertiaryContainer: '#001f24',
+    tertiaryContainer: '#CAF0F8',
+    onTertiaryContainer: '#003049',
 
     quaternary: '#CCCCCC',
     onQuaternary: '#000000',
 
-    graySystem: '#F4F4F4',
-    grayDark: '#8d8d8d',
+    graySystem: '#F4F4F9',
+    grayDark: '#667085',
 
     background: '#FFFFFF',
-    onBackground: '#1B1B1F',
+    onBackground: '#1D2B3A', // Usando el azul oscuro del logo en lugar de negro puro
 
-    surface: '#FEFBFF',
-    onSurface: '#1B1B1F',
-    surfaceVariant: '#E1E2EC',
-    onSurfaceVariant: '#44464F',
-    surfaceDisabled: 'rgba(27, 27, 31, 0.12)',
-    onSurfaceDisabled: 'rgba(27, 27, 31, 0.38)',
+    surface: '#FFFFFF',
+    onSurface: '#1D2B3A',
+    surfaceVariant: '#F2F4F7',
+    onSurfaceVariant: '#475467',
+    surfaceDisabled: 'rgba(29, 43, 58, 0.12)',
+    onSurfaceDisabled: 'rgba(29, 43, 58, 0.38)',
 
-    outline: '#757780',
-    disabled: '#c8c8c8',
-    onDisabled: '#666666',
-    outlineVariant: '#C5C6D0',
-    lightGray: '#F4F4F4',
-    darkGray: '#3C3C3C',
+    outline: '#D0D5DD',
+    disabled: '#D0D5DD',
+    onDisabled: '#667085',
+    outlineVariant: '#EAECF0',
+    lightGray: '#F9FAFB',
+    darkGray: '#344054',
     shadow: '#000000',
     scrim: '#000000',
 
-    inverseSurface: '#303034',
-    inverseOnSurface: '#F2F0F4',
-    inversePrimary: '#4dd2db',
+    inverseSurface: '#1D2B3A',
+    inverseOnSurface: '#F9FAFB',
+    inversePrimary: '#48CAE4',
 
     elevation: {
       level0: 'transparent',
-      level1: '#f5fdfe',
-      level2: '#edfbfc',
-      level3: '#e5f9fb',
-      level4: '#e0f8fa',
-      level5: '#daf7f9',
+      level1: '#F8FAFC',
+      level2: '#F1F5F9',
+      level3: '#E2E8F0',
+      level4: '#CBD5E1',
+      level5: '#94A3B8',
     },
 
-    backdrop: 'rgba(46, 48, 56, 0.4)',
+    backdrop: 'rgba(29, 43, 58, 0.4)',
 
-    success: '#46B000',
+    success: '#12B76A',
     onSuccess: '#FFFFFF',
-    successContainer: '#c6ffa8',
-    onSuccessContainer: '#0c2000',
+    successContainer: '#D1FADF',
+    onSuccessContainer: '#027A48',
 
-    error: '#E1251B',
+    error: '#F04438',
     onError: '#FFFFFF',
-    errorContainer: '#ffdad6',
-    onErrorContainer: '#410003',
+    errorContainer: '#FEE4E2',
+    onErrorContainer: '#B42318',
 
-    warning: '#795900',
+    warning: '#F79009',
     onWarning: '#FFFFFF',
-    warningContainer: '#ffdfa0',
-    onWarningContainer: '#261a00',
+    warningContainer: '#FEF0C7',
+    onWarningContainer: '#B54708',
 
-    info: '#00639A',
+    info: '#2E90FA',
     onInfo: '#FFFFFF',
-    infoContainer: '#cee5ff',
-    onInfoContainer: '#001d32',
+    infoContainer: '#D1E9FF',
+    onInfoContainer: '#175CD3',
 
     input: {
-      lightGray: '#e9e9e9',
-      borderGray: '#d1d1d1',
-      darkGray: '#8d8d8d',
+      lightGray: '#F2F4F7',
+      borderGray: '#D0D5DD',
+      darkGray: '#667085',
     },
 
-    // New home design
-    TabNavigationBackground: '#f8f8f8',
-    TabNavigationIcon: '#c1c1c4',
-    TabNavigationIconFocused: '#00a0a8', // Tono más oscuro del primario
+    // Home design actualizado
+    TabNavigationBackground: '#FFFFFF',
+    TabNavigationIcon: '#94A3B8',
+    TabNavigationIconFocused: '#007BFF', // Azul primario para foco
   },
 };
-
 export type ThemeColorsType = {
   primary: string;
   paragraph: string;

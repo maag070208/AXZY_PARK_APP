@@ -49,7 +49,7 @@ export const UserSearchInput = ({ label, value, onSelect, role }: UserSearchInpu
 
     return (
         <View>
-            <TouchableOpacity onPress={() => setVisible(true)}>
+            <TouchableOpacity onPress={() => setTimeout(() => setVisible(true), 100)}>
                 <View pointerEvents="none">
                     <TextInput
                         label={label}
